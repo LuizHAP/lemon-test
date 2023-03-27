@@ -61,17 +61,17 @@ export function Dialog({
 
     if (!e.shiftKey && document.activeElement !== firstElement) {
       (firstElement as HTMLElement).focus();
-      return e.preventDefault();
-    }
-
-    if (e.shiftKey && document.activeElement !== lastElement) {
-      (lastElement as HTMLElement).focus()
       e.preventDefault();
     }
   };
 
+
+  const handleClose = () => {
+    onClose && onClose();
+  };
+
   const keyListenersMap = new Map([
-    [ESCAPE_KEY, onClose],
+    [ESCAPE_KEY, handleClose],
     [TAB_KEY, handleTabKey]
   ]);
 
@@ -95,10 +95,6 @@ export function Dialog({
     document.body.appendChild(node);
   }
 
-  const handleClose = () => {
-    onClose && onClose();
-  };
-
   const handleOverlayClick = () => {
     if (closeOnOverlayClick) {
       handleClose();
@@ -106,11 +102,11 @@ export function Dialog({
   };
 
   return ReactDOM.createPortal(
-    <S.ModalOverlay onClick={handleOverlayClick}>
-      <S.Modal onClick={(e) => e.stopPropagation()}>
+    <S.ModalOverlay onClick={handleOverlayClick} role="dialog">
+      <S.Modal onClick={(e) => e.stopPropagation()} data-testid="modal">
         <S.ModalHeader>
           {title && <S.Title>{title}</S.Title>}
-          <Button variant="icon" onClick={onClose}>
+          <Button variant="icon" onClick={onClose} aria-label="Close" data-testid='close-button'>
             <X size={24} />
           </Button>
         </S.ModalHeader>
